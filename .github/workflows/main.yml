@@ -15,7 +15,7 @@ jobs:
       - name: build image
         run: |
           set -euxo pipefail
-          repository="ghcr.io/2bPro/deepfake"
+          repository="ghcr.io/2bpro/deepfake"
           version="$(grep _VERSION= Dockerfile | cut -d'"' -f2)"
           image="${repository}:${version}"
           docker build . --tag "${image}"
