@@ -1,6 +1,6 @@
 FROM pytorch/pytorch:2.7.0-cuda11.8-cudnn9-runtime@sha256:8d409f72f99e5968b5c4c9396a21f4b723982cfdf2c1a5b9cc045c5d0a7345a1
 
-ARG _VERSION=1.2
+ARG DEEPFAKE_VERSION="1.2"
 
 # Update image
 RUN : \
