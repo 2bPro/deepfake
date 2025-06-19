@@ -31,9 +31,7 @@ jobs:
       image: gcr.io/kaniko-project/executor:v1.22.0-debug
       options: --entrypoint ""
     steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
+      - uses: actions/checkout@v4
       - run: |
           echo "{\"auths\":{\"ghcr.io\":{\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}}}" > /kaniko/.docker/config.json
           /kaniko/executor \
