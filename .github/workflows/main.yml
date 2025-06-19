@@ -21,6 +21,11 @@ jobs:
           docker build . --tag "${image}"
           echo "image=${image}" >> "$GITHUB_ENV"
           echo "Built ${image}"
+      - name: push image
+        run: |
+          set -euxo pipefail
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+          docker push "${image}"
       - name: run trivy
         uses: aquasecurity/trivy-action@master
         with:
