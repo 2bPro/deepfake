@@ -1,0 +1,37 @@
+name: main
+on:
+  push:
+defaults:
+  run:
+    shell: bash
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: run hadolint
+        run: docker run --rm -i ghcr.io/hadolint/hadolint < Dockerfile
+      - name: build image
+        run: |
+          set -euxo pipefail
+          repository="ghcr.io/my/repo"
+          version="$(grep _VERSION= Dockerfile | cut -d'"' -f2)"
+          image="${repository}:${version}"
+          docker build . --tag "${image}"
+          echo "image=${image}" >> "$GITHUB_ENV"
+          echo "Built ${image}"
+      - name: run trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "${{ env.image }}"
+          format: 'github'
+          output: 'dependency-results.sbom.json'
+          github-pat: "${{ secrets.GITHUB_TOKEN }}"
+          severity: 'MEDIUM,CRITICAL,HIGH'
+          scanners: "vuln"
+      - name: upload trivy report
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'trivy-sbom-report'
+          path: 'dependency-results.sbom.json'
