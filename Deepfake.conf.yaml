@@ -1,0 +1,16 @@
+dataPath: "/safe_data/deepfake/data"
+outputsPath: "/safe_data/deepfake/results"
+modelType: "Classic"
+modelPath: "/deepfake/models/resnet18-f37072fd.pth"
+trainData:
+  deepfake2k: "ciplab/real-and-fake-face-detection"
+testData:
+  hard1k: "hamzaboulahia/hardfakevsrealfaces"
+valSize: 0.2
+testSize: 0 # test with subset of training dataset
+batchSize: 8
+imageHeight: 64
+imageWidth: 64
+numChannels: 3
+numEpochs: 20
+nGPUs: 1

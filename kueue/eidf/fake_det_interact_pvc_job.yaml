@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fake-det-interact-pvc-job
+  labels:
+    kueue.x-k8s.io/queue-name: eidf114ns-user-queue
+spec:
+  completions: 1
+  template:
+    metadata:
+      name: fake-det-interact-pvc-pod
+    spec:
+      containers:
+        - name: data-loader
+          image: ubuntu:noble-20250127
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - >-
+              apt update && apt install -y git vim && sleep infinity
+          resources:
+            requests:
+              cpu: 1
+              memory: '1Gi'
+            limits:
+              cpu: 1
+              memory: '1Gi'
+          volumeMounts:
+            - mountPath: /mnt/ceph_rbd
+              name: volume
+      restartPolicy: Never
+      volumes:
+        - name: volume
+          persistentVolumeClaim:
+            claimName: fake-det-pytorch-pvc

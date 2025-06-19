@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fake-det-clone-job
+  labels:
+    kueue.x-k8s.io/queue-name: eidf114ns-user-queue
+spec:
+  completions: 1
+  template:
+    metadata:
+      name: fake-det-clone-pod
+    spec:
+      containers:
+        - name: data-loader
+          image: alpine/git
+          args:
+            - clone
+            - 'https://$(GIT_USERNAME):$(GIT_PASSWORD)@git.ecdf.ed.ac.uk/qag/deepfake-detection.git'
+            - '/mnt/ceph_rbd/deepfake-detection'
+          resources:
+            requests:
+              cpu: 1
+              memory: '1Gi'
+            limits:
+              cpu: 1
+              memory: '1Gi'
+          env:
+          - name: GIT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: bp-secret
+          - name: GIT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: bp-secret
+          volumeMounts:
+            - mountPath: /mnt/ceph_rbd
+              name: volume
+      restartPolicy: Never
+      volumes:
+        - name: volume
+          persistentVolumeClaim:
+            claimName: fake-det-pytorch-pvc

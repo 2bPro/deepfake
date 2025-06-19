@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fake-det-pytorch-job
+  labels:
+    kueue.x-k8s.io/queue-name: eidf114ns-user-queue
+spec:
+  completions: 1
+  template:
+    metadata:
+      name: fake-det-pytorch-pod
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 100
+        fsGroup: 100
+      restartPolicy: Never
+      containers:
+      - name: fake-det-pytorch-con
+        image: quay.io/jupyter/pytorch-notebook:cuda12-pytorch-2.4.1
+        args: ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''", "--NotebookApp.password=''"]
+        volumeMounts:
+          - mountPath: /home/jovyan/work
+            name: volume
+          - mountPath: /dev/shm
+            name: dshm
+        resources:
+          requests:
+            cpu: 8
+            memory: '32Gi'
+          limits:
+            cpu: 16
+            memory: '64Gi'
+            nvidia.com/gpu: 1
+      nodeSelector:
+        nvidia.com/gpu.product: NVIDIA-A100-SXM4-40GB
+      volumes:
+        - name: volume
+          persistentVolumeClaim:
+            claimName: fake-det-pvc
+        - name: dshm
+          emptyDir:
+            medium: Memory

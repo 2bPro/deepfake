@@ -1,0 +1,12 @@
+kagglehub
+matplotlib
+pandas
+pennylane
+pip
+pynvml
+requests
+scikit-learn
+setuptools
+torch
+torchsummary
+torchvision

@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: deepfake-pytorch-
+  labels:
+    kueue.x-k8s.io/queue-name: eidf114ns-user-queue
+spec:
+  completions: 1
+  template:
+    metadata:
+      name: deepfake-pytorch
+    spec:
+      restartPolicy: Never
+      imagePullSecrets:
+      - name: harbor-secret
+      containers:
+      - name: deepfake
+        image: registry.eidf.ac.uk/eidf114/deepfake:v1.1
+        volumeMounts:
+          - mountPath: /safe_data
+            name: volume
+          - mountPath: /dev/shm
+            name: dshm
+        resources:
+          requests:
+            cpu: 8
+            memory: '32Gi'
+          limits:
+            cpu: 16
+            memory: '64Gi'
+            nvidia.com/gpu: 1
+      nodeSelector:
+        nvidia.com/gpu.product: NVIDIA-A100-SXM4-40GB
+      volumes:
+        - name: volume
+          persistentVolumeClaim:
+            claimName: deepfake-pvc
+        - name: dshm
+          emptyDir:
+            medium: Memory

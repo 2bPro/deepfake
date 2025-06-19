@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fake-det-pytorch-job
+  labels:
+    kueue.x-k8s.io/queue-name: eidf114ns-user-queue
+spec:
+  completions: 1
+  template:
+    metadata:
+      name: fake-det-pytorch-pod
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: fake-det-pytorch-con
+        image: pytorch/pytorch:2.0.1-cuda11.7-cudnn8-devel
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - >-
+            cd /mnt/ceph_rbd/deepfake-detection/ &&
+            python3 -m pip install -r requirements.txt --user &&
+            python3 deepfake_detection.py -c Deepfake.conf.yaml -o
+        volumeMounts:
+          - mountPath: /mnt/ceph_rbd
+            name: volume
+          - mountPath: /dev/shm
+            name: dshm
+        resources:
+          requests:
+            cpu: 8
+            memory: '32Gi'
+          limits:
+            cpu: 16
+            memory: '64Gi'
+            nvidia.com/gpu: 1
+      nodeSelector:
+        nvidia.com/gpu.product: NVIDIA-A100-SXM4-40GB
+      volumes:
+        - name: volume
+          persistentVolumeClaim:
+            claimName: fake-det-pytorch-pvc
+        - name: dshm
+          emptyDir:
+            medium: Memory
