@@ -11,7 +11,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
       - name: run hadolint
-        run: docker run --rm -i --failure-threshold error ghcr.io/hadolint/hadolint < Dockerfile
+        run: docker run --rm -i ghcr.io/hadolint/hadolint --failure-threshold error < Dockerfile
       - name: build image
         run: |
           set -euxo pipefail
