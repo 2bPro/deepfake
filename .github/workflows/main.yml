@@ -5,8 +5,13 @@ defaults:
   run:
     shell: bash
 jobs:
-  build:
+  build-push-scan:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -32,7 +37,7 @@ jobs:
           image-ref: "${{ env.image }}"
           format: 'github'
           output: 'dependency-results.sbom.json'
-          github-pat: "${{ secrets.GHCR_TOKEN }}"
+          github-pat: "${{ secrets.GITHUB_TOKEN }}"
           severity: 'MEDIUM,CRITICAL,HIGH'
           scanners: "vuln"
       - name: upload trivy report
