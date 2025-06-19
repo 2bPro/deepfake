@@ -8,7 +8,7 @@ on:
       - '*'
 
 env:
-  CI_REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
+  CI_REGISTRY_IMAGE: ghcr.io/2bpro/deepfake
   IMAGE_TAG: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'latest' }}
 
 jobs:
