@@ -26,11 +26,6 @@ jobs:
   build-and-push:
     name: Build and Push Image
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -54,11 +49,6 @@ jobs:
     name: Trivy Scan and SBOM
     runs-on: ubuntu-latest
     needs: build-and-push
-    permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
