@@ -1,11 +1,10 @@
 FROM pytorch/pytorch:2.7.0-cuda11.8-cudnn9-runtime@sha256:8d409f72f99e5968b5c4c9396a21f4b723982cfdf2c1a5b9cc045c5d0a7345a1
 
-ARG DEEPFAKE_VERSION="1.2"
-
 # Update image
 RUN : \
     && apt-get -y update -qq \
-    && apt-get -y install wget \
+    && apt-get -y install wget debsecan \
+    && apt-get install --no-install-recommends -y $(debsecan --suite bookworm --format packages --only-fixed) \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Create directories

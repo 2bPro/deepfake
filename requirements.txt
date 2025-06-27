@@ -4,9 +4,10 @@ pandas
 pennylane
 pip
 pynvml
-requests
+requests>=2.32.4
 scikit-learn
-setuptools
+setuptools>=78.1.1
 torch
 torchsummary
 torchvision
+urllib3>=2.5.0
